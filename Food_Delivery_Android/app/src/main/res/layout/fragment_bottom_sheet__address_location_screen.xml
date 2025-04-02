@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".Fragments.BottomSheet_AddressLocationScreen">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/background"
+            android:id="@+id/textView_BottomSheet"
+            android:layout_marginHorizontal="10dp"
+            android:textSize="22sp"
+            android:layout_marginTop="8dp"
+            android:text="Delivery To This Address :-"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:layout_marginTop="5dp"
+            android:layout_gravity="center"
+            android:drawableStart="@drawable/location_pin"
+            android:drawablePadding="2dp"
+            android:layout_marginEnd="15dp"
+            android:maxLines="1"
+            android:id="@+id/localityAddressShowcase_BottomSheet"
+            tools:ignore="UseCompatTextViewDrawableXml" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="22sp"
+            android:maxLines="1"
+            android:layout_marginTop="5dp"
+            android:layout_gravity="center"
+            android:id="@+id/AddressShowcase_BottomSheet"
+           />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/saveAddress_Button"
+            android:layout_gravity="end"
+            android:text="Save This Address"/>
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

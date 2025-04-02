@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".Ui.Screens.RestaurantViewScreen">
+
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:orientation="vertical"
+       android:id="@+id/aboutRestaurant_TopBar"
+       >
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="XYZ Resturant"
+          android:layout_marginTop="5dp"
+          android:textStyle="bold"
+          android:maxLines="2"
+          android:maxWidth="185dp"
+          android:drawableStart="@drawable/location_pin"
+          android:maxLength="78"
+          android:layout_marginStart="10dp"
+          android:textSize="20sp"
+          android:id="@+id/restaurant_Name_RestaurantScreen"/>
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:maxWidth="160dp"
+          android:id="@+id/restaurant_Address_restaurantScreen"
+          android:layout_marginStart="10dp"
+          android:layout_marginTop="5dp"
+          android:maxLines="2"
+          android:textSize="16sp"
+          android:text="168/16 NAi BAsti Gurugram"
+          />
+   </LinearLayout>
+   <TextView
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_margin="4dp"
+       android:textStyle="bold"
+       android:textSize="20sp"
+       android:text="Recommended for you"/>
+
+   <androidx.recyclerview.widget.RecyclerView
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:id="@+id/recyclerView_RestaurantScreen"
+       android:layout_marginTop="5dp">
+
+   </androidx.recyclerview.widget.RecyclerView>
+
+</LinearLayout>

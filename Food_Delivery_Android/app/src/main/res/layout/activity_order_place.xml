@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".Ui.Screens.OrderPlaceScreen">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Restaurant Name"
+            android:textSize="22sp"
+            android:layout_marginTop="5dp"
+            android:maxLines="1"
+            android:layout_marginHorizontal="10dp"
+            android:textStyle="bold"
+            android:id="@+id/restaurantName_orderScreen"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/addressOfRestaurant_OrderScreen"
+            android:textSize="20sp"
+            android:layout_marginTop="5dp"
+            android:maxLines="1"
+            android:layout_marginHorizontal="10dp"
+            android:text="Address of restaurant"/>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="3dp"
+        android:background="@color/black"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+<!--    Item Quantity And Price ShowCase-->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="8dp"
+        app:cardCornerRadius="10dp"
+        android:layout_marginHorizontal="10dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/nameOfItem_OrderScreen"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginHorizontal="8dp"
+               />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/nameOfItem_OrderScreen"
+                android:textSize="20sp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:id="@+id/priceOfItem_OrderScreen"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/quantityHandler"
+                android:gravity="center"
+                android:layout_alignParentEnd="true"
+                android:padding="8dp">
+
+                <!-- Decrement ImageView -->
+                <ImageView
+                    android:id="@+id/img_decrement"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/box_minus_orderscreen"
+                android:layout_margin="4dp"
+              />
+
+                <!-- TextView for Quantity -->
+                <TextView
+                    android:id="@+id/tv_quantity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1"
+                    android:textSize="16sp"
+                    android:padding="8dp"
+                    android:gravity="center"/>
+
+                <!-- Increment ImageView -->
+                <ImageView
+                    android:id="@+id/img_increment"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/add_box_orderscreen"
+                android:layout_margin="4dp"
+               />
+            </LinearLayout>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:textSize="20sp"
+                android:layout_marginStart="10dp"
+                android:layout_below="@+id/quantityHandler"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="5dp"
+                android:id="@+id/totalPriceAccordingQuantity_OrderScreen"/>
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+<!--    User Details For Delivery-->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        app:cardCornerRadius="10dp"
+        android:layout_marginVertical="8dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="22sp"
+                android:layout_marginHorizontal="10dp"
+                android:text="User-Details :-"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/userName_OrderScreen"
+                android:textSize="20sp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="8dp"
+                android:drawablePadding="3dp"
+                android:maxLines="1"
+                android:drawableStart="@drawable/profile_icon"
+                android:text="Chirag Bhatiwal"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="10dp"
+                android:maxLines="3"
+                android:textSize="20sp"
+                android:drawablePadding="3dp"
+                android:drawableStart="@drawable/location_pin"
+                android:id="@+id/userAddress_OrderScreen"
+                android:text="168/16,Nai  Basti Gurugram"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="10dp"
+                android:maxLines="1"
+                android:textSize="20sp"
+                android:drawablePadding="3dp"
+                android:id="@+id/userNumber_OrderScreen"
+                android:layout_marginBottom="5dp"
+                android:drawableStart="@drawable/phone_icon"
+                android:text="9898989898"/>
+
+            </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+<!--    Billing Details-->
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="8dp"
+        android:layout_marginHorizontal="10dp"
+        app:cardCornerRadius="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="8dp"
+                android:textSize="20sp"
+                android:text="Delivery in 40-50 Minutes"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/black"
+                android:layout_marginVertical="5dp"
+                android:layout_marginHorizontal="15dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="12dp"
+                android:textStyle="bold"
+                android:textSize="22sp"
+                android:text="Payment"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="3dp"
+                android:maxLines="1"
+                android:text="NOTE :- We're Accepting Cash On Delivery Only!"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="3dp"
+                android:orientation="horizontal">
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="10dp"
+                    android:id="@+id/radioButtonCashOnDelivery"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textSize="20sp"
+                    android:layout_marginTop="-1dp"
+                    android:layout_marginStart="-15dp"
+                    android:text="Cash On Delivery"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginHorizontal="15dp"
+                android:layout_marginBottom="5dp"
+                android:background="@color/black"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_marginHorizontal="12dp"
+                android:layout_marginTop="5dp"
+                android:text="Billing Details :-"
+                android:textSize="22sp"/>
+
+<!--  Billing Of Items-->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/itemBasePriceHeading"
+                    android:text="Item Price"
+                    android:textSize="18sp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginStart="12dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginTop="5dp"
+                    android:id="@+id/itemBasePrice_BillingSection"
+                    android:layout_alignParentEnd="true"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/itemTaxHeading"
+                    android:text="Gst and Tax -5%"
+                    android:textSize="18sp"
+                    android:layout_below="@id/itemBasePriceHeading"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginStart="12dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginTop="5dp"
+                    android:id="@+id/itemTaxPrice"
+                    android:text="Rs.20"
+                    android:layout_below="@id/itemBasePrice_BillingSection"
+                    android:layout_alignParentEnd="true"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/itemGstPriceHeading"
+                    android:text="Discount"
+                    android:textSize="18sp"
+                    android:layout_below="@id/itemTaxHeading"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginStart="12dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginTop="5dp"
+                    android:id="@+id/itemDiscountPrice"
+                    android:text="Rs.50"
+                    android:layout_below="@id/itemTaxPrice"
+                    android:layout_alignParentEnd="true"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/totalPriceHeading"
+                    android:text="Total Price"
+                    android:textSize="18sp"
+                    android:layout_below="@id/itemGstPriceHeading"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginStart="12dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginTop="5dp"
+                    android:id="@+id/totalPriceForBilling"
+                    android:text="Rs.90"
+                    android:layout_marginBottom="5dp"
+                    android:layout_below="@id/itemDiscountPrice"
+                    android:layout_alignParentEnd="true"/>
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/placeOrderButton"
+            android:text="Place Order"/>
+    </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

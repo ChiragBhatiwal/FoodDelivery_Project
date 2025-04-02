@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".Ui.Screens.PhoneVerificationScreen">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
+        android:layout_centerInParent="true"
+        android:id="@+id/PhoneNumberLayout_PhoneVerificationScreen">
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="Phone No."
+            android:id="@+id/PhoneNumber_PhoneVerificationScreen">
+
+        </com.google.android.material.textfield.TextInputEditText>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Send Otp"
+        android:layout_marginTop="10dp"
+        android:layout_centerInParent="true"
+        android:layout_below="@+id/PhoneNumberLayout_PhoneVerificationScreen"
+        android:id="@+id/sendOtpButton_PhoneVerificationScreen">
+
+    </Button>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:textStyle="bold"
+        android:textSize="25sp"
+        android:layout_marginStart="8dp"
+        android:visibility="gone"
+        android:id="@+id/textForSendingOtp_PhoneVerification">
+
+    </TextView>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginTop="55dp"
+        style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
+        android:layout_below="@+id/textForSendingOtp_PhoneVerification"
+        android:id="@+id/otpNumberLayout_PhoneVerificationScreen"
+        android:visibility="gone">
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="Otp"
+            android:id="@+id/otpNumber_PhoneVerificationScreen"
+            android:visibility="gone">
+
+        </com.google.android.material.textfield.TextInputEditText>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Verify Otp"
+        android:layout_marginTop="25dp"
+        android:layout_centerInParent="true"
+        android:layout_below="@+id/otpNumberLayout_PhoneVerificationScreen"
+        android:id="@+id/verifyOtpButton_PhoneVerificationScreen"
+        android:visibility="gone">
+
+    </Button>
+</RelativeLayout>

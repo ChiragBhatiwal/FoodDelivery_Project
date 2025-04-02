@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="10dp"
+        tools:ignore="UselessParent">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="253dp"
+            android:maxHeight="40dp"
+            android:maxLines="1"
+            android:layout_marginVertical="5dp"
+            android:id="@+id/name_items_SearchView"
+            tools:ignore="RelativeOverlap" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="240dp"
+            android:maxHeight="40dp"
+            android:layout_below="@+id/name_items_SearchView"
+            android:maxLines="1"
+            android:layout_marginVertical="5dp"
+            android:id="@+id/price_items_SearchView"
+            tools:ignore="RelativeOverlap" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="240dp"
+            android:maxHeight="40dp"
+            android:layout_below="@+id/price_items_SearchView"
+            android:maxLines="1"
+            android:layout_marginVertical="5dp"
+            android:id="@+id/review_items_Searchview"
+            tools:ignore="RelativeOverlap" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="240dp"
+            android:layout_below="@+id/review_items_Searchview"
+            android:maxLines="3"
+            android:layout_marginVertical="5dp"
+            android:scaleType="centerCrop"
+            android:id="@+id/Description_items_SearchView"
+            tools:ignore="RelativeOverlap" />
+
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:id="@+id/image_item_SearchView"
+            android:layout_alignParentEnd="true"
+            android:contentDescription="Add Image" />
+        <Button
+            android:layout_width="90dp"
+            android:layout_height="50dp"
+            android:text="@string/add_button_restaurant_screen"
+            android:layout_marginTop="90dp"
+            android:layout_marginEnd="19dp"
+            android:id="@+id/addToCart_button_SearchView"
+            android:layout_alignParentEnd="true"/>
+    </RelativeLayout>
+
+</LinearLayout>

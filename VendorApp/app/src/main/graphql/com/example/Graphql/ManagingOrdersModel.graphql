@@ -1,0 +1,10 @@
+query FetchOrders($status: String!){
+   orders(status: $status){
+      itemName
+      itemPrice
+      buyerName
+      buyerAddress
+      itemQuantity
+      orderStatus
+   }
+}

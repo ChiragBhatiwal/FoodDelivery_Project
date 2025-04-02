@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Food_Delivery</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="add_button_restaurant_screen">ADD</string>
+    <string name="title_activity_location_for_address_screen">LocationForAddressScreen</string>
+</resources>

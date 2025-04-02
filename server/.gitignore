@@ -1,0 +1,24 @@
+# Node.js dependencies
+node_modules/
+
+# Environment variables (security reasons)
+.env
+
+# Logs & debugging files
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+debug.log
+
+# OS-specific files
+.DS_Store    # macOS
+Thumbs.db    # Windows
+
+# Build & cache
+dist/
+build/
+.cache/
+
+# Ignore local IDE settings
+.vscode/
+.idea/

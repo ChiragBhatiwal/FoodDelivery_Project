@@ -1,0 +1,44 @@
+{
+  "name": "fooddelivery_sever",
+  "version": "1.0.0",
+  "description": "This is a food delivery app server",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon ./src/index.js"
+  },
+  "keywords": [
+    "Chirag",
+    "bhatiwal",
+    "Food",
+    "delivery"
+  ],
+  "author": "Chirag Bhatiwal",
+  "license": "ISC",
+  "dependencies": {
+    "@apollo/server": "^4.11.3",
+    "@graphql-tools/merge": "^9.0.24",
+    "apollo-server-express": "^3.13.0",
+    "axios": "^1.7.7",
+    "bcrypt": "^5.1.1",
+    "cloudinary": "^2.6.0",
+    "cors": "^2.8.5",
+    "cron": "^3.1.7",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "graphql": "^16.10.0",
+    "graphql-middleware": "^6.1.35",
+    "graphql-scalars": "^1.24.2",
+    "graphql-shield": "^7.6.5",
+    "graphql-upload-minimal": "^1.6.1",
+    "ioredis": "^5.6.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.13.1",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.10.0",
+    "nodemon": "^3.1.4",
+    "socket.io": "^4.8.0",
+    "twilio": "^5.3.5"
+  }
+}

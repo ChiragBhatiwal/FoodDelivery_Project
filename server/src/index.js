@@ -3,10 +3,9 @@ import http from 'http'
 import app from "./app.js"
 // import {initializeSocket} from './sockets.js'
 import dotenv from "dotenv"
+import "dotenv/config"
 
-dotenv.config({
-    path:"../.env"
-});
+dotenv.config({ path: "../.env" });
 
 const server = http.createServer(app);
 

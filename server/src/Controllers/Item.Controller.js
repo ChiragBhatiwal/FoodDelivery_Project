@@ -3,7 +3,7 @@ import itemModel from "../Models/Item.Model.js"
 import restaurantModel from "../Models/Restaurant.Model.js"
 
 //creating item for restaurant through graphql payload and uploading image to cloudinary
-const createItem = async ({ itemName, itemPrice, itemDescription, restaurantId, itemImage, dishType }) => {
+const createItemWithRestaurant = async ({ itemName, itemPrice, itemDescription, restaurantId, itemImage, dishType }) => {
     try {
         const imageUrl = itemImage;  //considering itemImage as a string coming from frontend 
 
@@ -43,7 +43,7 @@ const createItem = async ({ itemName, itemPrice, itemDescription, restaurantId, 
 }
 
 //Updating item details and images through graphql payload
-const updateItem = async (itemId, data) => {
+const updateItemInformations = async (itemId, data) => {
     try {
         const findItem = await itemModel.findById(itemId);
 
@@ -85,6 +85,7 @@ const updateItem = async (itemId, data) => {
     }
 }
 
+//Deleting Item With Item Id
 const deleteItem = async (itemId) => {
 
     if (!itemId) {

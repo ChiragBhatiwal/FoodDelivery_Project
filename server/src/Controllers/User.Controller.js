@@ -1,20 +1,21 @@
 import userModel from "../Models/Users.Model.js"
 import cartModel from "../Models/Cart.Model.js"
 import bcrypt from "bcrypt"
-import uploadOnCloudinarySingle from "../Middlewares/CloudinarySingle.Middleware.js"
 import twilio from 'twilio'
+import fs from "fs"
+import {v2 as cloudinary} from "cloudinary"
 
+const client = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTHTOKEN)
+const globalOTP = {}
+
+//Generating Refresh Token & Access Token For User
 const generateAccessAndRefreshToken = async (userId) => {
-    console.log("UserID:", userId);
-
     try {
-        // Find the user by ID
-        const user = await userModel.findById(userId).select("-password");
-        if (!user) {
-            console.error("User not found");
-            return { error: "User not found" };
-        }
+        const user = await userModel.findById(userId);
 
+        if (!user) {
+            return { success: false, message: "User Not Found" }
+        }
 
         // Generate tokens
         const accessToken = user.generateAccessToken();
@@ -35,114 +36,228 @@ const generateAccessAndRefreshToken = async (userId) => {
     }
 };
 
-
-const CreateUser = async (phoneNumber) => {
-
-    if (!phoneNumber) {
-        return console.log("Phone Number is required");
-    }
-
+// Sending Otp To User For Creating Account
+const sendOtpToUser = async (phoneNumber) => {
     try {
-        const verification = await client.verify.v2.services(verifyServiceSid)
-            .verifications
-            .create({ to: phoneNumber, channel: 'sms' });
 
-        return 'OTP sent successfully'
-    } catch (error) {
-       console.log("Error",error)
-    }
-}
-
-const UpdateUser = async (req, resp) => {
-
-    const userId = req.user;
-
-    if (!userId) {
-        return console.log("User id is required");
-    }
-
-    const data = req.body;
-
-    let updateFields = {};
-
-    if (data.username) {
-        updateFields.username = data.username;
-    }
-
-    if (data.password) {
-        try {
-            const hashedPassword = await bcrypt.hash(data.password, 10);
-            updateFields.password = hashedPassword;
-        } catch (error) {
-            console.error("Error hashing password:", error);
-            return resp.status(500).json({ error: "Error hashing password" });
+        if (!phoneNumber) {
+            return { success: false, message: "Phone Number Required." }
         }
-    }
 
-    if (data.email) {
-        updateFields.email = data.email;
-    }
+        const checkIfPhoneNumberExist = await userModel.findOne(phoneNumber)
 
-    try {
-        const updatedUser = await userModel.findByIdAndUpdate(
-            userId,
-            { $set: updateFields },
-            { new: true, select: '-password' } // new: true returns the updated document
+        if (checkIfPhoneNumberExist) {
+            return { success: false, message: "Phone Number Already Exist" }
+        }
+
+        const otp = Math.floor(100000 + Math.random() * 900000)
+
+        globalOTP.phoneNumber = otp;
+
+        await client.messages.create(
+            {
+                body: `OTP is :- ${otp}. It Will Expires In 10 Minutes.`,
+                from: process.env.TWILIO_PHONENUMBER,
+                to: phoneNumber
+            }
         );
 
-        if (!updatedUser) {
-            return resp.status(404).json({ error: "User not found" });
-        }
+        return { success: true, message: `OTP send To ${phoneNumber}` }
 
-        resp.status(200).json({ updatedUser });
     } catch (error) {
-        console.error("Error while updating user:", error);
-        resp.status(500).json({ error: "Internal server error" });
+        return { success: false, message: "Something Went Wrong", error: error.message }
     }
 
 }
 
-const LoginUser = async (phoneNumber,otp) => {
-
-    if ([phoneNumber, otp].some((field) => field.trim() == "")) {
-        return resp.status(400).send("Phone Number and OTP is Required");
-    }
-
+// Checking Otp For Creation Of User Account
+const checkOtpForCreatingUser = async (phoneNumber, otp) => {
     try {
-        const verificationCheck = await client.verify.v2
-            .services(verifyServiceSid)
-            .verificationChecks.create({ to: phoneNumber, code: otp });
 
-        if (verificationCheck.status === "approved") {
-            return "OTP verified successfully!";
-        } else {
-            throw new Error("Invalid OTP");
+        if (!phoneNumber || !otp) {
+            return { success: false, message: "Phone Number & OTP is Required" }
         }
+
+        if (globalOTP.phoneNumber !== otp) {
+            return { success: false, message: "Otp is in Valid or Maybe Expired" }
+        }
+
+        const createUser = await userModel.create({ phoneNumber })
+
+        if (!createUser) {
+            return { success: false, message: "Failed To Create User" }
+        }
+
+        const { refreshToken, accessToken } = await generateAccessAndRefreshToken(createUser._id)
+
+        if (!refreshToken || accessToken) {
+            return { success: false, message: "Failed To Generate Access And Refresh Token" }
+        }
+
+        delete globalOTP.phoneNumber;
+
+        return { success: true, message: "User Created SuccessFully", refreshToken, accessToken }
+
     } catch (error) {
-        throw new Error("OTP verification failed: " + error.message);
+        return { success: false, message: "Something Went Wrong", error: error.message }
     }
-
 }
 
-const LogoutUser = async (user) => {
-    const userData = await userModel.findByIdAndUpdate(
-        user._id,
-        {
-            $unset: {
-                refreshToken: 1
+// Logging out User by deleting RefreshToken From Document
+const LogoutUser = async (userId) => {
+    try {
+
+        const userData = await userModel.findByIdAndUpdate(
+            userId,
+            {
+                $unset: {
+                    refreshToken: 1
+                }
+            },
+            {
+                new: true
             }
-        },
-        {
-            new: true
-        }
-    ).select("-password -refreshToken")
-   
-    if(!userData)
-    {
-        return {error:"User not found"}
-    }
+        ).select("-refreshToken")
 
-    return {message:"User logged out successfully"}
+        if (!userData) {
+            return { error: "User not found" }
+        }
+
+        return { message: "User logged out successfully" }
+    } catch (error) {
+        return { success: false, message: "Something Went Wrong", error: error.message }
+    }
 }
 
-export { CreateUser, LoginUser, LogoutUser, UpdateUser };
+//Functionality Of Adding Image To User's Profile
+const addImageToUserProfile = async (image, userId) => {
+    try {
+
+        if (!image) {
+            return { success: false, message: "Image File is Required." }
+        }
+
+        const { createReadStream, filename } = await image;
+
+        const stream = createReadStream();
+
+        const tempPath = `./uploads/${filename}`
+
+        const writeStream = fs.createWriteStream(tempPath)
+
+        await new Promise((resolve, reject) => {           
+            stream.pipe(writeStream);
+            writeStream.on("finish", resolve)
+            writeStream.on("error", reject)
+        })
+
+        const imageUrl = await cloudinary.uploader.upload(tempPath)
+
+        fs.unlinkSync(tempPath);
+
+        const findUser = await userModel.findById(userId)
+
+        if (!findUser) {
+            return { success: false, message: "User Not Found" }
+        }
+
+        findUser.image = imageUrl.secure_url
+
+        await findUser.save({ validateBeforeSave: false })
+
+        return { success: true, message: "Image Uploaded SuccessFully" }
+
+    } catch (error) {
+        return { success: false, message: "Something Went Wrong", error: error.message }
+    }
+}
+
+//Providing Functionality of Updating Profile Image To The Vendor
+const updateImageOfUserProfile = async (image, userId) => {
+    try {
+
+        if (!image) {
+            return { success: false, message: "Image File Is Required." }
+        }
+
+        const { createReadStream, filename } = await image;
+
+        const stream = createReadStream();
+        const tempPath = `./upload/${filename}`
+        const writeStream = fs.createWriteStream(tempPath)
+
+        await new Promise((resolve, reject) => {           
+            stream.pipe(writeStream)
+            writeStream.on("finish", resolve)
+            writeStream.on("error", reject)
+        })
+
+        const imageUrl = await cloudinary.uploader.upload(tempPath)
+
+        fs.unlinkSync(tempPath)
+
+        const updateUserImage = await userModel.findByIdAndUpdate(userId, { $set: { image: imageUrl.secure_url } }, { new: true })
+
+        if (!updateUserImage) {
+            return { success: false, message: "Problem While Updating Image" }
+        }
+
+        return { success: true, message: "Image Updated SuccessFully" }
+
+    } catch (error) {
+        return { success: false, message: "Something Went Wrong", error: error.message }
+    }
+}
+
+// Adding Username For Helping Vendors
+const usernameAddingToUser = async(username,userId) => {
+    try{
+
+        if(!username)
+        {
+            return {success:false,message:"Username is Required."}
+        }
+
+        const findUser = await userModel.findById(userId)
+
+        if(!findUser)
+        {
+            return {success:false,message:"User Not Found"}
+        }
+
+        findUser.username = username
+
+        await findUser.save({validateBeforeSave})
+
+        return {success:true,message:"Username Added SuccessFully"}
+
+    }catch(error)
+    {
+        return {success:false,message:"Something Went Wrong",error:error.message}
+    }
+}
+
+//Updating Username Functionality to User
+const updatingUsernameOfUser = async (username,userId) => {
+    try{
+        if(!username)
+        {
+            return {success:false,message:"Username Is Required."}
+        }
+
+        const updateUsername = await userModel.findByIdAndUpdate(userId,{$set:{username:username}})
+
+        if(!updateUsername)
+        {
+            return {success:false,message:"Failed To Update Username"}
+        }
+
+        return {success:true,message:"User Updated SuccessFully"}
+        
+    }catch(error)
+    {
+        return {success:false,message:"Something Went Wrong",error:error.message}
+    }
+}
+
+export { sendOtpToUser, checkOtpForCreatingUser, LogoutUser,addImageToUserProfile,updateImageOfUserProfile,usernameAddingToUser,updatingUsernameOfUser};

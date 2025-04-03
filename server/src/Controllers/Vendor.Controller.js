@@ -6,7 +6,7 @@ import twilio from "twilio"
 
 // const redisClient = new redis();
 const globalOTP = {};
-// const client = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTHTOKEN);     
+const client = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTHTOKEN);
 
 //Generating Refresh Token And Access Token at the Time of Login Vendor
 const generateAccessAndRefreshToken = async (vendorId) => {
@@ -157,115 +157,248 @@ const LogoutSellerAccount = async (userId) => {
     }
 }
 
-//Adding Vendor Phone/Mobile Number To Their Accounts
-const addPhoneNumberToVendorAccount = async (phoneNumber, userId) => {
-    try {
-       const checkIfUserExist = await vendorModel.findById({userId})
-
-        if(!checkIfUserExist)
-        {
-            return {success:false,message:"User Not Found"}
-        }
-
-        const sendOtpToVendor = 
-       
-    } catch (error) {
-       return {success:false,message:"Something Went Wrong While Adding Phone Number",error:error.message}
-    }
-}
-
-//Number can be updated if user have previous(Number which is stored in database) mobile number
-const updatePhoneNumberInSellerAccount = async (req, resp) => {
-    //TODO
-}
-
 //Sending OTP to User For Checking User Is Valid
-const sendOTPToSeller = async (req, resp) => {
-    const { phoneNum } = req.body;
-
-    if (!phoneNum) {
-        return resp.status(404).json({ "message": "Phone Number Is Required" });
-    }
-
-    const otp = Math.floor(100000 + Math.random() * 900000)
-
-    if (otp) {
-        globalOTP.otp = otp
-    }
-
-    await client.messages.create(
-        {
-            body: `OTP is :- ${otp}. It Will Expires In 10 Minutes.`,
-            from: process.env.TWILIO_PHONENUMBER,
-            to: phoneNum
+const sendOTPToVendor = async (phoneNumber, userId) => {
+    try {
+        if (!phoneNumber) {
+            return { status: false, message: "Phone Number Required" }
         }
-    )
 
-    return resp.status(200).json({ "message": "OTP sent Successfully" });
+        const checkIfUserExist = await vendorModel.findById(userId)
+
+        if (!checkIfUserExist) {
+            return { success: false, message: "User Not Found" }
+        }
+
+        const otp = Math.floor(100000 + Math.random() * 900000)
+
+        globalOTP.userId = otp;
+
+        await client.messages.create(
+            {
+                body: `OTP is :- ${otp}. It Will Expires In 10 Minutes.`,
+                from: process.env.TWILIO_PHONENUMBER,
+                to: phoneNumber
+            }
+        )
+
+        return { success: true, message: "OTP send SuccessFully" }
+    } catch (error) {
+        return { success: false, message: "Something went Wrong while Sending OTP", error: error.message }
+    }
+}
+
+//Adding Vendor Phone/Mobile Number To Their Accounts
+const verifyAndAddPhoneNumberToVendorAccount = async (phoneNumber, otp, userId) => {
+    try {
+        if (!phoneNumber || !otp) {
+            return { success: false, message: "Phone Number And OTP Required." }
+        }
+
+        const checkIfUserExist = await vendorModel.findById(userId);
+
+        if (!checkIfUserExist) {
+            return { success: false, message: "User Not Exist." }
+        }
+
+        if (globalOTP.userId !== otp) {
+            return { success: false, message: "OTP is Either Expired or Invalid" }
+        }
+
+        checkIfUserExist.phoneNumber = phoneNumber;
+
+        await checkIfUserExist.save({ validateBeforeSave: false })
+
+        return { success: true, message: "Phone Number Saved SuccessFully" }
+
+    } catch (error) {
+        return { success: false, message: "Something Went Wrong While Adding Phone Number", error: error.message }
+    }
 }
 
 //Checking If Old Password is Right and User Remeber it Than only allowing user to Update Password 
-const checkingIfOldPasswordIsRightAndUpdatePassword = async (req, resp) => {
-    const { oldPassword, newPassword } = req.body;
+const checkingIfOldPasswordIsCorrectAndUpdatePassword = async (oldPassword, newPassword, userId) => {
+    try {
 
-    if (!oldPassword) {
-        return resp.status(404).json({ "messages": "Password Is Missing" })
-    }
+        const checkIfUserExist = await vendorModel.findById(userId)
 
-    const passwordCorrect = vendorModel.isPasswordCorrect(password)
-    if (passwordCorrect) {
-
-        const updatePassword = await vendorModel.findByIdAndUpdate(sellerId, { $set: { password: newPassword } }, { new: true });
-
-        if (!updatePassword) {
-            return resp.status(400).json({ "message": "Something Went Wrong While Upating Passowrd" })
+        if (!checkIfUserExist) {
+            return { success: false, message: "User Not Found" }
         }
 
-        return resp.status(200).json({ "message": "Password Updated SuccessFully" })
+        const isPasswordCorrect = checkIfUserExist.isPasswordCorrect(oldPassword)
 
-    } else {
-        return resp.status(400).json({ "message": "Password is Wrong.Try Again" })
+        if (!isPasswordCorrect) {
+            return { success: false, message: "Your Password is Wrong. Please Enter Correct Password." }
+        }
+
+        const hashPassword = await bcrypt.hash(newPassword, 10);
+
+        const saveNewPassword = await vendorModel.findByIdAndUpdate(userId, { $set: { password: hashPassword } })
+
+        if (!saveNewPassword) {
+            return { success: false, message: "Failed To Update Password" }
+        }
+
+        return { success: true, message: "Password Changed SuccessFully" }
+
+    } catch (error) {
+        return { success: false, message: "Something Went Wrong", error: error.message }
+    }
+
+}
+
+// Sending OTP to Vendor For Updating Password If They Don't Remembered Password
+const sendOTPForPasswordChange = async (userId) => {
+    try {
+
+        const findUser = await vendorModel.findById(userId)
+
+        if (!findUser) {
+            return { success: false, message: "User Not Found" }
+        }
+
+        const otp = Math.floor(100000 + Math.random() * 900000)
+
+        globalOTP.userId = otp;
+
+        await client.messages.create(
+            {
+                body: `OTP is :- ${otp}. It Will Expires In 10 Minutes.`,
+                from: process.env.TWILIO_PHONENUMBER,
+                to: findUser.phoneNumber
+            }
+        );
+
+        return { success: true, message: "Otp Send SuccessFully" }
+
+    } catch (error) {
+        return { success: false, message: "Something Went Wrong", error: error.message }
     }
 }
 
 //Update Password if User didn't remember password by sending otp to mobile
-const updatePasswordOfSellerAccount = async (userId) => {
+const updatePasswordWithOTP = async (otp, newPassword, userId) => {
+    try {
 
-    const { otp, newPassword } = req.body;
-
-    if (!otp && !newPassword) {
-        return resp.status(404).json({ "message": "Otp or Password may bew Missing" });
-    }
-
-    const sellerId = req.vendor;
-
-    if (!sellerId) {
-        return resp.status(404).json({ "message": "Either token or Seller Missing" })
-    }
-
-    if (globalOTP.otp === otp) {
-        const updatePassword = await vendorModel.findByIdAndUpdate(sellerId, { $set: { password: newPassword } }, { new: true });
-
-        if (!updatePassword) {
-            return resp.status(400).json({ "message": "Something Went Wrong While Upating Password" })
+        if (!otp || !newPassword) {
+            return { success: false, message: "Otp and New Password Is Required" }
         }
 
-        delete globalOTP.otp;
+        if (globalOTP.userId !== otp) {
+            return { success: false, message: "Either Otp is Invalid or Expires" }
+        }
 
-        return resp.status(200).json({ "message": "Password updated Successfully" })
-    } else {
-        delete globalOTP.otp;
-        return resp.status(400).json({ "message": "Error Occured" })
+        const checkIfUserExist = await vendorModel.findById(userId)
+
+        if (!checkIfUserExist) {
+            return { success: false, message: "User Not Found" }
+        }
+
+        const hashPassword = await bcrypt.hash(newPassword, 10)
+
+        const changePassword = await vendorModel.findByIdAndUpdate(userId, { $set: { password: hashPassword } })
+
+        if (!changePassword) {
+            return { success: false, message: "Something Went Wrong" }
+        }
+
+        return { success: true, message: "Password Change SuccessFully" }
+    } catch (error) {
+        return { success: false, message: "Something Went Wrong", error: error.message }
+    }
+}
+
+//Uploading Image Functionality If Vendor Want
+const addImageToVendorProfile = async (image, userId) => {
+    try {
+
+        if (!image) {
+            return { success: false, message: "Image File is Required." }
+        }
+
+        const { createReadStream, filename } = await image;
+
+        const stream = createReadStream();
+
+        const tempPath = `./uploads/${filename}`
+
+        const writeStream = fs.createWriteStream(tempPath)
+
+        await new Promise((resolve, reject) => {           
+            stream.pipe(writeStream);
+            writeStream.on("finish", resolve)
+            writeStream.on("error", reject)
+        })
+
+        const imageUrl = await cloudinary.uploader.upload(tempPath)
+
+        fs.unlinkSync(tempPath);
+
+        const findUser = await vendorModel.findById(userId)
+
+        if (!findUser) {
+            return { success: false, message: "User Not Found" }
+        }
+
+        findUser.image = imageUrl.secure_url
+
+        await findUser.save({ validateBeforeSave: false })
+
+        return { success: true, message: "Image Uploaded SuccessFully" }
+
+    } catch (error) {
+        return { success: false, message: "Something Went Wrong", error: error.message }
+    }
+}
+
+//Providing Functionality of Updating Profile Image To The Vendor
+const updateImageOfVendorProfile = async (image, userId) => {
+    try {
+
+        if (!image) {
+            return { success: false, message: "Image File Is Required." }
+        }
+
+        const { createReadStream, filename } = await image;
+
+        const stream = createReadStream();
+        const tempPath = `./upload/${filename}`
+        const writeStream = fs.createWriteStream(tempPath)
+
+        await new Promise((resolve, reject) => {           
+            stream.pipe(writeStream)
+            writeStream.on("finish", resolve)
+            writeStream.on("error", reject)
+        })
+
+        const imageUrl = await cloudinary.uploader.upload(tempPath)
+
+        fs.unlinkSync(tempPath)
+
+        const updateVendorImage = await vendorModel.findByIdAndUpdate(userId, { $set: { image: imageUrl.secure_url } }, { new: true })
+
+        if (!updateVendorImage) {
+            return { success: false, message: "Problem While Updating Image" }
+        }
+
+        return { success: true, message: "Image Updated SuccessFully" }
+
+    } catch (error) {
+        return { success: false, message: "Something Went Wrong", error: error.message }
     }
 }
 
 export {
-    checkingIfOldPasswordIsRightAndUpdatePassword,
-    sendOTPToSeller,
+    updateImageOfVendorProfile,
+    addImageToVendorProfile,
+    sendOTPForPasswordChange,
+    sendOTPToVendor,
     CreateSellerAccount,
     LoginSellerByEmailAndPassword,
     LogoutSellerAccount,
     UpdateVendorUsernameAndEmail,
-    updatePhoneNumberInSellerAccount,
-    updatePasswordOfSellerAccount
+    checkingIfOldPasswordIsCorrectAndUpdatePassword,
+    updatePasswordWithOTP,
+    verifyAndAddPhoneNumberToVendorAccount
 };

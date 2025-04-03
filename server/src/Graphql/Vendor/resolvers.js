@@ -1,4 +1,4 @@
-import { CreateSellerAccount, LoginSellerByEmailAndPassword, LogoutSellerAccount, updatePasswordOfSellerAccount } from "../../Controllers/Vendor.Controller.js"
+import { LogoutSellerAccount } from "../../Controllers/Vendor.Controller.js"
 
 const queries = {
     getVendorById: async () => { },

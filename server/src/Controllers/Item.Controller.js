@@ -33,12 +33,13 @@ const createItemWithRestaurant = async ({ itemName, itemPrice, itemDescription, 
         })
 
         if (!itemCreation) {
-            return console.log("Error in creating item")
+            return {success:false,message:"Failed To Create Item"}
         }
 
-        return "Item Created Successfully";
+        return {success:true,message:"Item Created SuccessFully"}
+
     } catch (error) {
-        console.error("Error creating item:", error);
+        return {success:false,message:"Something Went Wrong",error:error.message}
     }
 }
 
@@ -48,7 +49,7 @@ const updateItemInformations = async (itemId, data) => {
         const findItem = await itemModel.findById(itemId);
 
         if (!findItem) {
-            return new Error("Item not found");
+            return {success:false,message:"Item Not Found"}
         }
 
         const updatedFields = {};
@@ -78,49 +79,35 @@ const updateItemInformations = async (itemId, data) => {
 
         await itemModel.findByIdAndUpdate(itemId, { $set: updatedFields }, { new: true });
 
-        return "Item Updated Successfully";
+        return {success:true,message:"Item Updated SuccessFully"}
+
     } catch (error) {
-        console.error("Error updating item:", error);
-        return new Error("Internal Server Error");
+       return {success:false,message:"Something Went Wrong",error:error.message}
     }
 }
 
 //Deleting Item With Item Id
 const deleteItem = async (itemId) => {
+    try {
+        const deleteItem = await itemModel.findByIdAndDelete(itemId);
 
-    if (!itemId) {
-        return console.log("item id is required");
-    }
-
-    const deleteItem = await itemModel.findByIdAndDelete(itemId);
-
-    if (!deleteItem) {
-        return console.log("Error in Deleting Item");
-    }
-
-    const deleteItemFromRestaurant = await restaurantModel.findByIdAndUpdate(
-        restaurantId,
-        {
-            $pull: { dishesAvailabe: deleteItem._id }
-        },
-        {
-            new: true
+        if (!deleteItem) {
+            return {success:false,message:"Failed To Delete Item"}
         }
-    );
 
-    if (!deleteItemFromRestaurant) {
-        return console.log("Error while deleting from restaurant fields");
+        return {success:true,message:"Item Deleted SuccessFully"}
+
+    } catch (error) {
+        return { success: false, message: "Something Went Wrong", error: error.message }
     }
-
-    return "Item Deleted Successfully";
 }
 
 // Fetching items from search bar and searching in the items collection
 const searchingItemFromSearchBar = async (value) => {
     try {
-        const { value } = req.body;
+
         if (!value) {
-            return res.status(400).json({ message: "Value required for searching in the field" });
+            return { success: false, message: "Please Provide Searching Value" }
         }
 
         const searchInItems = await restaurantModel.aggregate(
@@ -149,35 +136,31 @@ const searchingItemFromSearchBar = async (value) => {
         );
 
         if (!searchInItems || searchInItems.length === 0) {
-            return res.status(404).json({ message: "Oops! Nothing in the List" });
+            return { success: false, message: "OOPS...No Item Found" }
         }
 
-        return searchInItems;
+        return { success: true, message: "Items Found", searchInItems }
 
     } catch (error) {
-        console.error("Error occurred while searching items:", error);
-        res.status(500).json({ message: "Internal Server Error" });
+        return { success: false, message: "Something Went Wrong", error: error.message }
     }
 };
 
 // Fetching all the items of a particular restaurant
 const getItemsWithRestaurantId = async (restaurantId) => {
-    try{
-    if (!restaurantId) {
-        return resp.status(404).json("User id Is Required.");
-    }
+    try {
 
-    const findItems = await itemModel.find({ restaurantId: restaurantId._id });
+        const findItems = await itemModel.find({ restaurantId: restaurantId._id });
 
-    if (!findItems) {
-        return resp.status(404).json("No Items Found");
-    }
+        if (!findItems) {
+            return { success: false, message: "No Item Found" }
+        }
 
-    return findItems
-}catch(error){
-    console.error("Error occurred while fetching items:", error);
-    return "Internal Server Error"
+        return { success: true, message: "All Items Fetched", findItems }
+
+    } catch (error) {
+        return { success: false, message: "Something Went Wrong", error: error.message }
     }
 }
 
-export { createItem, deleteItem, updateItem, searchingItemFromSearchBar, getItemsWithRestaurantId };
+export { createItemWithRestaurant, deleteItem, updateItemInformations, searchingItemFromSearchBar, getItemsWithRestaurantId };

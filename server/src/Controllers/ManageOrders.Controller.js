@@ -128,4 +128,5 @@ const pannelOrdersAndRevenueManaging = async (req, resp) => {
 
     return resp.status(200).json(fetchDetails[0]); 
 };
+
 export {pannelOrdersAndRevenueManaging,fetchOrdersByStatus,updateOrderStatus}
